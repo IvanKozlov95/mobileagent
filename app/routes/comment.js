@@ -53,6 +53,7 @@ router.get('/list', (req, res, next) => {
 	var page = Number.parseInt(req.query.page) || 0;
 	var postId = req.query.post;
 	Comment.find({ 'post': postId })
+		.where('isDeleted').ne(true)
 		.limit(perPage)
 		.skip(perPage * page)
 		.exec((err, comments) => {
