@@ -1,6 +1,8 @@
-var passport		= require('passport');
-var LocalStrategy	= require('passport-local').Strategy;
-var mongoose		= require('./mongoose');
+const passport		= require('passport');
+const LocalStrategy	= require('passport-local').Strategy;
+const mongoose		= require('./mongoose');
+const User			= mongoose.model('User');
+
 
 function initPassport() {
 	passport.use(new LocalStrategy({
@@ -20,5 +22,17 @@ function initPassport() {
 		});
 	}));
 }
+
+passport.serializeUser(function(user, done) {
+	done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+	User.findById(id, function(err,user){
+		err 
+			? done(err)
+			: done(null, user);
+	});
+});
 
 module.exports = initPassport;

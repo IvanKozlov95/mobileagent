@@ -26,6 +26,7 @@ require('./app/lib/passport')(passport);
 *	Loading routes
 */
 app.use('/login', Routes.login);
+app.use('/register', Routes.register);
 
 app.listen(port, () => {
   console.log('We are live on ' + port);
