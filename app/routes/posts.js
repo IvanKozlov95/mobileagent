@@ -72,7 +72,7 @@ router.get('/list', async (req, res, next) => {
 				.skip(perPage * page)
 				.lean();
 	} catch (e) {
-		return next(err);
+		return next(e);
 	}
 	res.json(posts);
 });
