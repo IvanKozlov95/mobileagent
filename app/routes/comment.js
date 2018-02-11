@@ -2,7 +2,6 @@ const router	= require('express').Router();
 const passport	= require('passport');
 const mongoose	= require('mongoose');
 const auth		= require('../middleware/authentication');
-const Post		= mongoose.model('Post');
 const Comment	= mongoose.model('Comment');
 
 router.post('/add', auth.isAuthenticated, (req, res, next) => {
@@ -15,6 +14,18 @@ router.post('/add', auth.isAuthenticated, (req, res, next) => {
 	comment.save((err) => {
 		err ? next(err) : res.send('Comment created');
 	});
+});
+
+router.get('/list', (req, res, next) => {
+	var perPage = Number.parseInt(req.query.perpage) || 5;
+	var page = Number.parseInt(req.query.page) || 0;
+	var postId = req.query.post;
+	Comment.find({ 'post': postId })
+		.limit(perPage)
+		.skip(perPage * page)
+		.exec((err, comments) => {
+			return err ? next(err) : res.json(comments);
+		});
 });
 
 module.exports = router;
