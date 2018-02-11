@@ -2,6 +2,7 @@ const router	= require('express').Router();
 const passport	= require('passport');
 const mongoose	= require('mongoose');
 const auth		= require('../middleware/authentication');
+const Errors	= require('../lib/error');
 const User		= mongoose.model('User');
 
 router.post('/', auth.isAnon, function(req, res, next) {
@@ -12,11 +13,10 @@ router.post('/', auth.isAnon, function(req, res, next) {
 		req.logIn(user, function(err) {
 		  return err
 			? next(err)
-			: res.send('login');
+			: res.send('Successful login.');
 		});
 	  } else {
-	  	res.send('unknown user');
-		// hanle user not found here
+	  	return next(new Errors.BadRequestError('Unknown user.'))
 	  } 
 	}
   )(req, res, next);

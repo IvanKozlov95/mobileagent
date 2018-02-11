@@ -9,6 +9,7 @@ const config		= require('./config');
 const mongoose		= require('./app/lib/mongoose');
 const MongoStore	= require('connect-mongo')(session);
 const Routes		= require('./app/routes');
+const Errors		= require('./app/lib/error');
 const port = config.get('port');
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -30,6 +31,20 @@ app.use('/register', Routes.register);
 app.use('/posts', Routes.posts);
 app.use('/comment', Routes.comment);
 app.use('/user', Routes.user);
+
+/*
+*	Errors handling
+*/
+app.use((err, req, res, next) => {
+	if (err instanceof Errors.NotFound
+		|| err instanceof Errors.BadRequest
+		|| err instanceof Errors.ObjectNotFound) {
+		res.status(err.status).send(err.message).end();
+	} else {
+		console.log(err);
+		res.status(500).end();
+	}
+});
 
 app.listen(port, () => {
   console.log('We are live on ' + port);

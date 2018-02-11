@@ -3,6 +3,7 @@ const passport	= require('passport');
 const mongoose	= require('mongoose');
 const auth		= require('../middleware/authentication');
 const util		= require('../lib/util');
+const Errors	= require('../lib/error');
 const ObjectId	= require('mongoose').Types.ObjectId;
 const Post		= mongoose.model('Post');
 const Like		= mongoose.model('Like');
@@ -24,8 +25,8 @@ router.post('/create', auth.isAdmin, async (req, res, next) => {
 router.post('/like', auth.isAuthenticated, async (req, res, next) => {
 	var postId = req.body.post;
 	try {
-		if (!ObjectId.isValid(postId)) throw new Error('My error');
-		if (await Post.findById(postId) == null) throw new Error('400');
+		util.checkObjectId(postId);
+		if (await Post.findById(postId) == null) throw new Errors.ObjectNotFoundError('Post');
 		var like = await Like.findOne({ 'user': req.user._id, 'post': postId });
 		if (like) {
 			like.value = req.body.value || true;
@@ -40,19 +41,20 @@ router.post('/like', auth.isAuthenticated, async (req, res, next) => {
 	} catch (e) {
 		return next(e);
 	}
-	res.send('like asdasdasd');
+	res.send('Post has been liked!');
 });
 
 router.post('/edit', auth.isAdmin, async (req, res, next) => {
 	var postId = req.body.post;
 	try {
-		if (!ObjectId.isValid(req.query.id)) throw new Error('My error');
+		util.checkObjectId(req.query.id);
+		util.checkText(req.body.text);
 		var post = await Post.findById(req.query.id);
 		if (post) {
 			post.text = req.body.text;
 			await post.save();
 		} else {
-			res.status(404).end();
+			throw new ObjectNotFoundError('Post');
 		}
 	} catch (e) {
 		return next(e);
@@ -76,12 +78,12 @@ router.get('/list', async (req, res, next) => {
 
 router.get('/info', async (req, res, next) => {
 	try {
-		if (!ObjectId.isValid(req.query.id)) throw new Error('My error');
+		util.checkObjectId(req.query.id);
 		var post = await Post.findById(req.query.id);
 	} catch (e) {
 		return next(e);
 	}
-	post ? res.json(post) : res.status(404).end();
+	post ? res.json(post) : util._throw(new ObjectNotFoundError('Post'));
 });
 
 module.exports = router;
