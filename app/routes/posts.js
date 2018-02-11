@@ -48,14 +48,14 @@ router.post('/like', auth.isAuthenticated, async (req, res, next) => {
 router.post('/edit', auth.isAdmin, async (req, res, next) => {
 	var postId = req.body.post;
 	try {
-		util.checkObjectId(req.query.id);
+		util.checkObjectId(postId);
 		util.checkText(req.body.text);
-		var post = await Post.findById(req.query.id);
+		var post = await Post.findById(postId);
 		if (post) {
 			post.text = req.body.text;
 			await post.save();
 		} else {
-			throw new ObjectNotFoundError('Post');
+			throw new Errors.ObjectNotFound('Post');
 		}
 	} catch (e) {
 		return next(e);
@@ -84,7 +84,7 @@ router.get('/info', async (req, res, next) => {
 	} catch (e) {
 		return next(e);
 	}
-	post ? res.json(post) : util._throw(new ObjectNotFoundError('Post'));
+	post ? res.json(post) : util._throw(new Errors.ObjectNotFound('Post'));
 });
 
 module.exports = router;
