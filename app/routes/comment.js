@@ -16,6 +16,22 @@ router.post('/add', auth.isAuthenticated, (req, res, next) => {
 	});
 });
 
+router.post('/edit', auth.isAdmin, (req, res, next) => {
+	var commentId = req.body.comment;
+	Comment.findById(commentId, (err, comment) => {
+		if (err) return next(err);
+
+		if (comment) {
+			comment.text = req.body.text;
+			comment.save((err) => {
+				return err ? next(err) : res.send('Comment has been updeate');
+			});
+		} else {
+			res.status(404).end()
+		}
+	});
+});
+
 router.get('/list', (req, res, next) => {
 	var perPage = Number.parseInt(req.query.perpage) || 5;
 	var page = Number.parseInt(req.query.page) || 0;
