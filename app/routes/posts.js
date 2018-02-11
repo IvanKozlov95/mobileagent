@@ -38,6 +38,17 @@ router.post('/like', auth.isAuthenticated, (req, res, next) => {
 			return err ? next(err) : res.send('Like has been updated');
 		});
 	})
-})
+});
+
+router.get('/list', (req, res, next) => {
+	var perPage = Number.parseInt(req.query.perpage) || 2;
+	var page = Number.parseInt(req.query.page) || 0;
+	Post.find()
+		.limit(perPage)
+		.skip(perPage * page)
+		.exec((err, posts) => {
+			return err ? next(err) : res.json(posts);
+		});
+});
 
 module.exports = router;
