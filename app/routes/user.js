@@ -18,4 +18,9 @@ router.get('/list', auth.isAdmin, async (req, res, next) => {
 	res.json(users);
 });
 
+router.get('/logout', (req, res, next) => {
+	req.logout();
+	res.send('You\'ve signed out');
+})
+
 module.exports = router;
