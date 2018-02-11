@@ -40,6 +40,23 @@ router.post('/like', auth.isAuthenticated, (req, res, next) => {
 	})
 });
 
+router.post('/edit', auth.isAdmin, (req, res, next) => {
+	var postId = req.body.post;
+
+	Post.findById(postId, (err, post) => {
+		if (err) return next(err);
+
+		if (post) {
+			post.text = req.body.text;
+			post.save((err) => {
+				return err ? next(err) : res.send('Post has been updated');
+			});
+		} else {
+			res.status(404).end();
+		}
+	});
+})
+
 router.get('/list', (req, res, next) => {
 	var perPage = Number.parseInt(req.query.perpage) || 2;
 	var page = Number.parseInt(req.query.page) || 0;
