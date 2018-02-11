@@ -2,7 +2,7 @@ const mongoose	= require('../lib/mongoose');
 const Schema	= mongoose.Schema;
 const crypto	= require('crypto');
 
-var	UserSchema = new Schema({
+let	UserSchema = new Schema({
 	username: { type: String, unique: true, required: true },
 	passwordHash: { type: String, required: true },
 	salt: { type: String, required: true }

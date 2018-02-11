@@ -5,31 +5,34 @@ const auth		= require('../middleware/authentication');
 const Errors	= require('../lib/error');
 const User		= mongoose.model('User');
 
-router.post('/', auth.isAnon, function(req, res, next) {
-	var user = new User( { 
+router.post('/', auth.isAnon, async function(req, res, next) {
+	let user = new User( { 
 			username: req.body.username,
 			password: req.body.password,
 		} );
 
-	user.save(function(err) {
-		if (err instanceof mongoose.Error.ValidationError){
+	try {
+		await user.save();
+		req.logIn(user, (err) => {
+			if (err) {
+				throw err;
+			} else {
+				res.status(200).send('You\'ve signed up!');
+			}
+		});
+	} catch (e) {
+		if (e instanceof mongoose.Error.ValidationError){
 			return next(new Errors.BadRequest());
 		}
 
 		// If err.code == 11000 this is duplicate key error
 		// that means that user already exists
-		if (err && 	err.code == 11000) {
+		if (e.code == 11000) {
 			return next(new Errors.BadRequest('User exists'));
 		}
 
-		return err 
-		?  next(err)
-		  : req.logIn(user, function(err) {
-		    return err
-		      ? next(err)
-		      : res.status(200).send('You\'ve signed up!');
-		  });
-		});
+		return next(e);
+	}
 });
 
 module.exports = router;

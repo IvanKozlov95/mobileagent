@@ -9,7 +9,7 @@ const Post		= mongoose.model('Post');
 const Like		= mongoose.model('Like');
 
 router.post('/create', auth.isAdmin, async (req, res, next) => {
-	var post = new Post({
+	let post = new Post({
 		title: req.body.title,
 		text: req.body.text,
 		creator: req.user._id
@@ -24,11 +24,11 @@ router.post('/create', auth.isAdmin, async (req, res, next) => {
 });
 
 router.post('/like', auth.isAuthenticated, async (req, res, next) => {
-	var postId = req.body.post;
+	let postId = req.body.post;
 	try {
 		util.checkObjectId(postId);
 		if (await Post.findById(postId) == null) throw new Errors.ObjectNotFound('Post');
-		var like = await Like.findOne({ 'user': req.user._id, 'post': postId });
+		let like = await Like.findOne({ 'user': req.user._id, 'post': postId });
 		if (like) {
 			like.value = req.body.value || true;
 		} else {
@@ -46,11 +46,11 @@ router.post('/like', auth.isAuthenticated, async (req, res, next) => {
 });
 
 router.post('/edit', auth.isAdmin, async (req, res, next) => {
-	var postId = req.body.post;
+	let postId = req.body.post;
 	try {
 		util.checkObjectId(postId);
 		util.checkText(req.body.text);
-		var post = await Post.findById(postId);
+		let post = await Post.findById(postId);
 		if (post) {
 			post.text = req.body.text;
 			await post.save();
@@ -64,13 +64,13 @@ router.post('/edit', auth.isAdmin, async (req, res, next) => {
 });
 
 router.get('/list', async (req, res, next) => {
-	var perPage = Number.parseInt(req.query.perpage) || 5;
-	var page = Number.parseInt(req.query.page) || 0;
+	let perPage = Number.parseInt(req.query.perpage) || 5;
+	let page = Number.parseInt(req.query.page) || 0;
 	try {
-		var posts = await Post.find()
+		let posts = await Post.find()
 				.limit(perPage)
 				.skip(perPage * page)
-				.exec();
+				.lean();
 	} catch (e) {
 		return next(err);
 	}
@@ -80,7 +80,7 @@ router.get('/list', async (req, res, next) => {
 router.get('/info', async (req, res, next) => {
 	try {
 		util.checkObjectId(req.query.id);
-		var post = await Post.findById(req.query.id);
+		let post = await Post.findById(req.query.id);
 	} catch (e) {
 		return next(e);
 	}

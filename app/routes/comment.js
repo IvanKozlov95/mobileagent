@@ -8,7 +8,7 @@ const Comment	= mongoose.model('Comment');
 const Post		= mongoose.model('Post');
 
 router.post('/add', auth.isAuthenticated, async (req, res, next) => {
-	var comment = new Comment({
+	let comment = new Comment({
 		user: req.user._id,
 		post: req.body.post,
 		text: req.body.text
@@ -16,7 +16,7 @@ router.post('/add', auth.isAuthenticated, async (req, res, next) => {
 	try {
 		util.checkObjectId(comment.post);
 		util.checkText(comment.text);
-		var post = await Post.findById(comment.post);
+		let post = await Post.findById(comment.post);
 		post ? await comment.save() : util._throw(new Errors.ObjectNotFound('Post'));
 	} catch (e) {
 		return next(e);
@@ -25,10 +25,10 @@ router.post('/add', auth.isAuthenticated, async (req, res, next) => {
 });
 
 router.post('/edit', auth.isAdmin, async (req, res, next) => {
-	var commentId = req.body.comment;
+	let commentId = req.body.comment;
 	try {
 		util.checkObjectId(commentId);
-		var comment = await Comment.findById(commentId);
+		let comment = await Comment.findById(commentId);
 		util.checkText(req.body.text);
 		comment 
 			? await comment.update({ text: req.body.text })
@@ -40,10 +40,10 @@ router.post('/edit', auth.isAdmin, async (req, res, next) => {
 });
 
 router.post('/delete', auth.isAdmin, async (req, res, next) => {
-	var commentId = req.body.comment;
+	let commentId = req.body.comment;
 	try {
 		util.checkObjectId(commentId);
-		var comment = await Comment.findById(commentId);
+		let comment = await Comment.findById(commentId);
 		comment 
 			? await comment.update({ isDeleted: true })
 			: util._throw(new Errors.ObjectNotFound('Comment'));
@@ -54,16 +54,16 @@ router.post('/delete', auth.isAdmin, async (req, res, next) => {
 });
 
 router.get('/list', async (req, res, next) => {
-	var perPage = Number.parseInt(req.query.perpage) || 5;
-	var page = Number.parseInt(req.query.page) || 0;
-	var postId = req.query.post;
+	let perPage = Number.parseInt(req.query.perpage) || 5;
+	let page = Number.parseInt(req.query.page) || 0;
+	let postId = req.query.post;
 	try {
 		util.checkObjectId(postId);
-		var comments = await Comment.find({ 'post': postId })
+		let comments = await Comment.find({ 'post': postId })
 			.where('isDeleted').ne(true)
 			.limit(perPage)
 			.skip(perPage * page)
-			.exec();
+			.lean();
 	} catch (e) {
 		return next(err);
 	}
