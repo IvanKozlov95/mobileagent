@@ -36,9 +36,7 @@ app.use('/user', Routes.user);
 *	Errors handling
 */
 app.use((err, req, res, next) => {
-	if (err instanceof Errors.NotFound
-		|| err instanceof Errors.BadRequest
-		|| err instanceof Errors.ObjectNotFound) {
+	if (err instanceof Errors.MyError) {
 		res.status(err.status).send(err.message).end();
 	} else {
 		console.log(err);

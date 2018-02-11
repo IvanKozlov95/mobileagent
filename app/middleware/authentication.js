@@ -1,17 +1,19 @@
+const Errors	= require('../lib/error');
+
 exports.isAdmin = function(req, res, next) {
 	(req.isAuthenticated() && req.user.__t == 'Admin')
 		? next()
-		: res.send('Sorry, you\'re not an admin');
+		: next(new Errors.UnauthorizedAcsess('Sorry, you\'re not an admin'));
 };
 
 exports.isAuthenticated = function (req, res, next){
 	req.isAuthenticated()
 		? next()
-		: res.send('You must sign in.');
+		: next(new Errors.UnauthorizedAcsess('You must sign in.'));
 };
 
 exports.isAnon = function(req, res, next) {
 	req.isAuthenticated()
-		? res.send('You\'re alredy authorized.')
+		? next(new Errors.UnauthorizedAcsess('You\'re alredy authorized.'))
 		: next();
 }
