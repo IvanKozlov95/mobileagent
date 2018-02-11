@@ -1,9 +1,10 @@
 const router	= require('express').Router();
 const passport	= require('passport');
 const mongoose	= require('mongoose');
+const auth		= require('../middleware/authentication');
 const User		= mongoose.model('User');
 
-router.post('/', function(req, res, next) {
+router.post('/', auth.isAnon, function(req, res, next) {
 	var user = new User( { 
 			username: req.body.username,
 			password: req.body.password,
