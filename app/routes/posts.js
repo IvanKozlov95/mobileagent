@@ -3,7 +3,7 @@ const passport	= require('passport');
 const mongoose	= require('mongoose');
 const Post		= mongoose.model('Post');
 
-router.post('/create', (req, res, next) => {
+router.post('/create', auth.isAdmin, (req, res, next) => {
 	var post = new Post({
 		title: req.body.title,
 		text: req.body.text,
