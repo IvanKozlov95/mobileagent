@@ -27,7 +27,7 @@ router.post('/', auth.isAnon, function(req, res, next) {
 		  : req.logIn(user, function(err) {
 		    return err
 		      ? next(err)
-		      : res.status(200).end();
+		      : res.status(200).send('You\'ve signed up!');
 		  });
 		});
 });
