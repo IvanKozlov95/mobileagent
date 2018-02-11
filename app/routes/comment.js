@@ -15,6 +15,7 @@ router.post('/add', auth.isAuthenticated, async (req, res, next) => {
 	});
 	try {
 		util.checkObjectId(comment.post);
+		util.checkText(comment.text);
 		var post = await Post.findById(comment.post);
 		post ? await comment.save() : util._throw(new Errors.ObjectNotFound('Post'));
 	} catch (e) {
