@@ -2,6 +2,7 @@ const router	= require('express').Router();
 const passport	= require('passport');
 const mongoose	= require('mongoose');
 const auth		= require('../middleware/authentication');
+const util		= require('../lib/util');
 const ObjectId	= require('mongoose').Types.ObjectId;
 const Post		= mongoose.model('Post');
 const Like		= mongoose.model('Like');
@@ -24,9 +25,10 @@ router.post('/like', auth.isAuthenticated, async (req, res, next) => {
 	var postId = req.body.post;
 	try {
 		if (!ObjectId.isValid(postId)) throw new Error('My error');
+		if (await Post.findById(postId) == null) throw new Error('400');
 		var like = await Like.findOne({ 'user': req.user._id, 'post': postId });
 		if (like) {
-			like.value = req.body.value;
+			like.value = req.body.value || true;
 		} else {
 			like = new Like({
 				user: req.user._id,
