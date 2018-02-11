@@ -55,10 +55,10 @@ router.post('/edit', auth.isAdmin, (req, res, next) => {
 			res.status(404).end();
 		}
 	});
-})
+});
 
 router.get('/list', (req, res, next) => {
-	var perPage = Number.parseInt(req.query.perpage) || 2;
+	var perPage = Number.parseInt(req.query.perpage) || 5;
 	var page = Number.parseInt(req.query.page) || 0;
 	Post.find()
 		.limit(perPage)
@@ -66,6 +66,20 @@ router.get('/list', (req, res, next) => {
 		.exec((err, posts) => {
 			return err ? next(err) : res.json(posts);
 		});
+});
+
+router.get('/info', (req, res, next) => {
+	var postId = req.query.id;
+
+	Post.findById(postId, (err, post) => {
+		if (err) return next(err);
+
+		if (post) {
+			res.json(post);
+		} else {
+			res.status(404).end();
+		}
+	});
 });
 
 module.exports = router;
