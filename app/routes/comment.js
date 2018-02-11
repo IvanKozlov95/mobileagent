@@ -3,7 +3,7 @@ const passport	= require('passport');
 const mongoose	= require('mongoose');
 const auth		= require('../middleware/authentication');
 const ObjectId	= require('mongoose').Types.ObjectId;
-const util		= require('../util/util');
+const util		= require('../lib/util');
 const Comment	= mongoose.model('Comment');
 const Post		= mongoose.model('Post');
 
