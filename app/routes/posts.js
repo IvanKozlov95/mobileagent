@@ -67,7 +67,7 @@ router.get('/list', async (req, res, next) => {
 	let perPage = Number.parseInt(req.query.perpage) || 5;
 	let page = Number.parseInt(req.query.page) || 0;
 	try {
-		let posts = await Post.find()
+		var posts = await Post.find()
 				.limit(perPage)
 				.skip(perPage * page)
 				.lean();

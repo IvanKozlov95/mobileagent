@@ -59,7 +59,7 @@ router.get('/list', async (req, res, next) => {
 	let postId = req.query.post;
 	try {
 		util.checkObjectId(postId);
-		let comments = await Comment.find({ 'post': postId })
+		var comments = await Comment.find({ 'post': postId })
 			.where('isDeleted').ne(true)
 			.limit(perPage)
 			.skip(perPage * page)
