@@ -15,9 +15,10 @@ router.post('/create', auth.isAdmin, async (req, res, next) => {
 		creator: req.user._id
 	})
 	try {
+		util.checkText(post.text);
 		await post.save();
 	} catch (e) {
-		next(err);
+		next(e);
 	};
 	res.send('Post created');
 });
@@ -26,7 +27,7 @@ router.post('/like', auth.isAuthenticated, async (req, res, next) => {
 	var postId = req.body.post;
 	try {
 		util.checkObjectId(postId);
-		if (await Post.findById(postId) == null) throw new Errors.ObjectNotFoundError('Post');
+		if (await Post.findById(postId) == null) throw new Errors.ObjectNotFound('Post');
 		var like = await Like.findOne({ 'user': req.user._id, 'post': postId });
 		if (like) {
 			like.value = req.body.value || true;

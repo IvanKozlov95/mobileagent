@@ -16,7 +16,7 @@ router.post('/', auth.isAnon, function(req, res, next) {
 			: res.send('Successful login.');
 		});
 	  } else {
-	  	return next(new Errors.BadRequestError('Unknown user.'))
+	  	return next(new Errors.BadRequest('Unknown user.'))
 	  } 
 	}
   )(req, res, next);

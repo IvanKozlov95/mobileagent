@@ -13,13 +13,13 @@ router.post('/', auth.isAnon, function(req, res, next) {
 
 	user.save(function(err) {
 		if (err instanceof mongoose.Error.ValidationError){
-			return next(new Errors.BadRequestError());
+			return next(new Errors.BadRequest());
 		}
 
 		// If err.code == 11000 this is duplicate key error
 		// that means that user already exists
 		if (err && 	err.code == 11000) {
-			return next(new Errors.BadRequestError('User exists'));
+			return next(new Errors.BadRequest('User exists'));
 		}
 
 		return err 

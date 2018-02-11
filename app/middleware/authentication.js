@@ -7,7 +7,7 @@ exports.isAdmin = function(req, res, next) {
 exports.isAuthenticated = function (req, res, next){
 	req.isAuthenticated()
 		? next()
-		: res.redirect('/');
+		: res.send('You must sign in.');
 };
 
 exports.isAnon = function(req, res, next) {
