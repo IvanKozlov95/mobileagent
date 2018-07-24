@@ -1,6 +1,6 @@
-# mobileagent
+# nodeBlogApi
 
-Poroject created as a test task for Mobishop. Rest api for simple blog on NodeJs with express and mongodb.
+Rest api for simple blog on NodeJs with express and mongodb.
 
 To deploy run in console
 
